@@ -1,0 +1,95 @@
+/* Styles pour un design de carte de billet créatif */
+.creative-ticket-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.creative-ticket-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-preview {
+  height: 250px; /* Hauteur fixe pour un affichage uniforme */
+  background-size: cover !important;
+  background-position: center !important;
+  position: relative;
+  border-bottom: 2px dashed #e0e0e0;
+}
+
+.ticket-preview::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Overlay pour rendre le texte plus lisible */
+  z-index: 1;
+}
+
+.ticket-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-weight: 500;
+  overflow: auto;
+  max-height: 100%;
+}
+
+.ticket-info {
+  padding: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket-info h4 {
+  font-weight: bold;
+  color: #343a40;
+  margin-bottom: 15px;
+}
+
+.ticket-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ticket-actions .btn {
+  font-size: 0.9rem;
+  padding: 8px 15px;
+  border-radius: 50px; /* Boutons plus arrondis */
+}
+
+/* Spinner de chargement */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Modale de modification plus moderne */
+.modal-content {
+  border-radius: 15px;
+}
+
+.modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.modal-footer {
+  border-top: none;
+  padding-top: 0;
+}

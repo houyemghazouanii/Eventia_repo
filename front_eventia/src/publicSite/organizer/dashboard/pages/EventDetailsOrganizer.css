@@ -1,0 +1,14 @@
+.event-details-card {
+  background: linear-gradient(to right, #fdfbfb, #ebedee);
+  transition: all 0.3s ease-in-out;
+  border-radius: 15px;
+}
+
+.info-box {
+  transition: transform 0.2s ease-in-out;
+}
+
+.info-box:hover {
+  transform: scale(1.02);
+  background-color: #f8f9fa;
+}
