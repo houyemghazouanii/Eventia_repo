@@ -47,12 +47,7 @@ function EventList({ showHeader = true }) {
       .catch(() => {});
   }, []);
 
-  // 🔹 Filtrage côté frontend
-  useEffect(() => {
-    handleSearch();
-  }, [searchTitle, searchDate, selectedPriceFilter, selectedType]);
-
-  const handleSearch = () => {
+   const handleSearch = () => {
     const titleFilter = searchTitle.toLowerCase();
     const filtered = events.filter((event) => {
       const matchesTitle = event.titre.toLowerCase().includes(titleFilter);
@@ -71,6 +66,11 @@ function EventList({ showHeader = true }) {
     setFilteredEvents(filtered);
   };
 
+  /// 🔹 Filtrage côté frontend
+useEffect(() => {
+  handleSearch();
+}, [searchTitle, searchDate, selectedPriceFilter, selectedType, events]);
+ 
   // 🔹 Réservation
   const handleReserve = async (event) => {
     if (!isAuthenticated) {

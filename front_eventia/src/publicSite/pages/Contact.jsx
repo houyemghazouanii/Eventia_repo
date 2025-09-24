@@ -78,6 +78,7 @@ function Contact() {
                 <div className="mt-4 rounded overflow-hidden" style={{height: 200}}>
                   <iframe
                     className="w-100 h-100 border-0"
+                    title="Carte de localisation de l'événement"
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52479.227980152206!2d10.121088!3d36.806496!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd3377a1f1d2e9%3A0x96b95d6a05c1e5e2!2sTunis%2C%20Tunisie!5e0!3m2!1sfr!2stn!4v1692274838285!5m2!1sfr!2stn"
                     allowFullScreen=""
                     aria-hidden="false"

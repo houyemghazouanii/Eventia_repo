@@ -38,7 +38,6 @@ export default function PreferencesFinal() {
     { nom: "OTHER", color: "muted", icon: <FaEllipsisH size={24} /> }
   ];
 
-  const budgets = ["Gratuit", "Payant"];
 
   useEffect(() => {
     if (!participantId || !token) {
@@ -78,9 +77,7 @@ export default function PreferencesFinal() {
     });
   };
 
-  const handleChange = (field, value) => {
-    setPreferences(prev => ({ ...prev, [field]: value }));
-  };
+ 
 
   const handleSubmit = () => {
     if (preferences.categories.length === 0 || !preferences.budget || !preferences.localisation) {

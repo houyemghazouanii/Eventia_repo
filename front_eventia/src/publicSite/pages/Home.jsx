@@ -308,7 +308,7 @@ export default function Home() {
             <img
               className="bg-white rounded-circle shadow p-1 mx-auto mb-3"
               src="/publicSite/assets/img/testimonial-1.jpg"
-              style={{ width: 80, height: 80 }}
+              style={{ width: 80, height: 80 }} alt='testimonial1'
             />
             <h5 className="mb-0">John Doe</h5>
             <p>New York, USA</p>
@@ -321,7 +321,7 @@ export default function Home() {
             <img
               className="bg-white rounded-circle shadow p-1 mx-auto mb-3"
               src="/publicSite/assets/img/testimonial-2.jpg"
-              style={{ width: 80, height: 80 }}
+              style={{ width: 80, height: 80 }} alt='testimonial2'
             />
             <h5 className="mb-0">John Doe</h5>
             <p>New York, USA</p>
@@ -334,7 +334,7 @@ export default function Home() {
             <img
               className="bg-white rounded-circle shadow p-1 mx-auto mb-3"
               src="/publicSite/assets/img/testimonial-3.jpg"
-              style={{ width: 80, height: 80 }}
+              style={{ width: 80, height: 80 }} alt='testimonial3'
             />
             <h5 className="mb-0">John Doe</h5>
             <p>New York, USA</p>
@@ -347,7 +347,7 @@ export default function Home() {
             <img
               className="bg-white rounded-circle shadow p-1 mx-auto mb-3"
               src="/publicSite/assets/img/testimonial-4.jpg"
-              style={{ width: 80, height: 80 }}
+              style={{ width: 80, height: 80 }} alt='testimonial4'
             />
             <h5 className="mb-0">John Doe</h5>
             <p>New York, USA</p>

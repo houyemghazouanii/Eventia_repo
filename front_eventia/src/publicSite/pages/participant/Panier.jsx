@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Panier() {
   const [panier, setPanier] = useState([]);
-  const [loadingId, setLoadingId] = useState(null);
+  const [loadingId] = useState(null);
 
   useEffect(() => {
     const storedPanier = JSON.parse(localStorage.getItem("panier")) || [];
