@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaEye, FaFileExcel, FaFilePdf } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "../../../../admin/config/axiosConfig";
@@ -18,7 +18,8 @@ export default function ParticipantsOrganizer() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  const fetchParticipants = async () => {
+  // Fonction stable pour fetch
+  const fetchParticipants = useCallback(async () => {
     try {
       const response = await axios.get(`/users/${organizerId}/participants`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -30,7 +31,7 @@ export default function ParticipantsOrganizer() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [organizerId, token]);
 
   useEffect(() => {
     if (!organizerId || !token || role !== "ORGANIZER") {
@@ -39,7 +40,7 @@ export default function ParticipantsOrganizer() {
       return;
     }
     fetchParticipants();
-  }, [organizerId, token, role]);
+  }, [fetchParticipants, organizerId, token, role]);
 
   // Filtrage
   const filteredParticipants = participants.filter(
