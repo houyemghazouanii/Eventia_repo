@@ -10,7 +10,6 @@ import Categories from "./pages/Categories";
 import PublicEvents from "./pages/EventList";
 import Destination from "./pages/Destination";
 import Booking from "./pages/Booking";
-import Team from "./pages/Team";
 import Testimonial from "./pages/Testimonial";
 import Error from "./pages/Error";
 import Contact from "./pages/Contact";
@@ -144,7 +143,6 @@ const PublicLayout = () => {
           <Route path="/publicevents" element={<PublicEvents />} />
           <Route path="/destination" element={<Destination />} />
           <Route path="/booking" element={<Booking />} />
-          <Route path="/team" element={<Team />} />
           <Route path="/testimonial" element={<Testimonial />} />
           <Route path="/error" element={<Error />} />
           <Route path="/contact" element={<Contact />} />
