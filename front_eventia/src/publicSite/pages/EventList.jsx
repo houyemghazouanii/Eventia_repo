@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -15,10 +15,9 @@ function EventList({ showHeader = true }) {
   const [availableTypes, setAvailableTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const navigate = useNavigate();
 
-  // 🔹 Chargement des événements et auth
+  // Chargement des événements et auth
   useEffect(() => {
     setLoading(true);
     axios
@@ -39,7 +38,7 @@ function EventList({ showHeader = true }) {
     setIsAuthenticated(token && role === "USER");
   }, []);
 
-  // 🔹 Chargement des types d'événements
+  // Chargement des types d'événements
   useEffect(() => {
     axios
       .get("http://localhost:8081/events/types")
@@ -47,7 +46,8 @@ function EventList({ showHeader = true }) {
       .catch(() => {});
   }, []);
 
-   const handleSearch = () => {
+  // Filtrage côté frontend
+  const handleSearch = useCallback(() => {
     const titleFilter = searchTitle.toLowerCase();
     const filtered = events.filter((event) => {
       const matchesTitle = event.titre.toLowerCase().includes(titleFilter);
@@ -64,14 +64,13 @@ function EventList({ showHeader = true }) {
       return matchesTitle && matchesDate && matchesPrice && matchesType;
     });
     setFilteredEvents(filtered);
-  };
+  }, [searchTitle, searchDate, selectedPriceFilter, selectedType, events]);
 
-  /// 🔹 Filtrage côté frontend
-useEffect(() => {
-  handleSearch();
-}, [searchTitle, searchDate, selectedPriceFilter, selectedType, events]);
- 
-  // 🔹 Réservation
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  // Réservation
   const handleReserve = async (event) => {
     if (!isAuthenticated) {
       Swal.fire("Erreur", "Vous devez être connecté pour réserver.", "error");
@@ -110,7 +109,7 @@ useEffect(() => {
       if (index === -1) {
         panier.push({ event, quantite: parseInt(quantite, 10), reservationId: reservation.id });
       } else {
-        panier[index].quantite = quantite;
+        panier[index].quantite = parseInt(quantite, 10);
         panier[index].reservationId = reservation.id;
       }
       localStorage.setItem("panier", JSON.stringify(panier));
@@ -132,7 +131,7 @@ useEffect(() => {
     }
   };
 
-  // 🔹 Donner un avis
+  // Donner un avis
   const handleAddReview = async (event) => {
     if (!isAuthenticated) {
       Swal.fire("Erreur", "Vous devez être connecté pour donner un avis.", "error");
@@ -148,28 +147,28 @@ useEffect(() => {
       focusConfirm: false,
       showCancelButton: true,
       preConfirm: () => {
-        const rating = parseInt(document.getElementById('swal-rating').value, 10);
-        const comment = document.getElementById('swal-comment').value;
+        const rating = parseInt(document.getElementById("swal-rating").value, 10);
+        const comment = document.getElementById("swal-comment").value;
         if (!rating || rating < 1 || rating > 5) {
-          Swal.showValidationMessage('La note doit être entre 1 et 5');
+          Swal.showValidationMessage("La note doit être entre 1 et 5");
         }
         return { rating, comment };
-      }
+      },
     });
 
     if (!formValues) return;
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.post(
         `http://localhost:8081/reviews/event/${event.id}`,
         formValues,
-        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
       );
 
-      Swal.fire('Merci !', 'Votre avis a été enregistré.', 'success');
+      Swal.fire("Merci !", "Votre avis a été enregistré.", "success");
     } catch (error) {
-      Swal.fire('Erreur', error.response?.data || 'Impossible d’enregistrer l’avis', 'error');
+      Swal.fire("Erreur", error.response?.data || "Impossible d’enregistrer l’avis", "error");
     }
   };
 
@@ -232,7 +231,32 @@ useEffect(() => {
               <h6 className="section-title bg-white text-center text-primary px-3">
                 {isAuthenticated ? "Tous les événements" : "Événements à la une"}
               </h6>
-              <h1 className="mb-4">{isAuthenticated ? "Découvrez nos événements" : "À la une"}</h1>
+              <h1 className="mb-4">
+                {isAuthenticated ? "Découvrez nos événements" : "À la une"}
+              </h1>
+
+              {/* Inputs recherche par titre et date */}
+              {isAuthenticated && (
+                <div className="row mb-3 justify-content-center">
+                  <div className="col-md-3 mb-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Rechercher par titre"
+                      value={searchTitle}
+                      onChange={(e) => setSearchTitle(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-3 mb-2">
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={searchDate}
+                      onChange={(e) => setSearchDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               {!isAuthenticated && (
                 <div className="card mb-4 text-center shadow-sm p-3">
@@ -250,13 +274,15 @@ useEffect(() => {
 
               {isAuthenticated && (
                 <div className="row mb-4 justify-content-center">
-                  {/* Filtres */}
+                  {/* Filtres prix et type */}
                   <div className="col-md-3 mb-2">
                     <div className="btn-group" role="group">
                       {["", "GRATUIT", "PAYANT"].map((option) => (
                         <label
                           key={option}
-                          className={`btn btn-outline-primary ${selectedPriceFilter === option ? "active" : ""}`}
+                          className={`btn btn-outline-primary ${
+                            selectedPriceFilter === option ? "active" : ""
+                          }`}
                         >
                           <input
                             type="radio"
@@ -280,7 +306,9 @@ useEffect(() => {
                     >
                       <option value="">Tous les types</option>
                       {availableTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -300,13 +328,19 @@ useEffect(() => {
                       <div className="overflow-hidden">
                         <img
                           className="img-fluid"
-                          src={event.image ? `http://localhost:8081/uploads/images/${event.image}` : "/publicSite/assets/img/default.jpg"}
+                          src={
+                            event.image
+                              ? `http://localhost:8081/uploads/images/${event.image}`
+                              : "/publicSite/assets/img/default.jpg"
+                          }
                           alt={event.titre}
                           style={{ width: "100%", height: "250px", objectFit: "cover" }}
                         />
                       </div>
                       <div className="d-flex border-bottom">
-                        <small className="flex-fill text-center border-end py-2">📍 {event.adresse}</small>
+                        <small className="flex-fill text-center border-end py-2">
+                          📍 {event.adresse}
+                        </small>
                         <small className="flex-fill text-center border-end py-2">
                           📅 {new Date(event.dateDebut).toLocaleDateString()}
                         </small>
@@ -346,7 +380,6 @@ useEffect(() => {
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
         </div>

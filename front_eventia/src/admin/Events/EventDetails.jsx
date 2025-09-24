@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from '../config/axiosConfig';
 
 const EventDetails = () => {
   const { id } = useParams();
+
   const [event, setEvent] = useState({
     titre: "",
     description: "",
@@ -28,16 +29,12 @@ const EventDetails = () => {
     typeOrganisateur: "",
   });
 
-  useEffect(() => {
-    loadEvent();
-  }, []);
-
-  const loadEvent = async () => {
+  // 🔹 Fonction de chargement de l'événement avec useCallback
+  const loadEvent = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:8081/events/${id}`);
       const data = response.data;
 
-      // Assurer le format de l'heure (slice pour "14:30:00" → "14:30")
       setEvent({
         ...data,
         heureDebut: data.heureDebut ? data.heureDebut.slice(0, 5) : "",
@@ -57,7 +54,12 @@ const EventDetails = () => {
     } catch (error) {
       console.error("Erreur chargement :", error);
     }
-  };
+  }, [id]);
+
+  // 🔹 useEffect pour charger les données
+  useEffect(() => {
+    loadEvent();
+  }, [loadEvent]);
 
   return (
     <div className="container mt-5" style={{ padding: "40px 80px 80px 80px" }}>
@@ -89,7 +91,7 @@ const EventDetails = () => {
                     {event.image ? (
                       <img
                         src={`http://localhost:8081/uploads/images/${event.image}`}
-                        alt="event"
+                        alt="Détails de l'événement"
                         className="rounded img-fluid"
                         style={{ width: "100%", maxHeight: "300px", objectFit: "cover" }}
                       />

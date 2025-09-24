@@ -253,7 +253,7 @@ const Events = () => {
                             <td>
                               <img
                                 src={event.image ? `http://localhost:8081/uploads/images/${event.image}` : "/assets/images/faces/default.jpg"}
-                                alt={`Image de ${event.titre}`}
+                                alt={event.titre}
                                 style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
                               />
                             </td>

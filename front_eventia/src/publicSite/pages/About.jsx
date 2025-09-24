@@ -114,55 +114,7 @@ function About() {
       </div>
       {/* About End */}
 
-      {/* Team Start */}
-      <div className="container-xxl py-5 bg-light">
-        <div className="container">
-          <div className="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 className="section-title bg-white text-center text-primary px-3">
-              Notre Équipe
-            </h6>
-            <h1 className="mb-5">Rencontrez nos experts</h1>
-          </div>
-          <div className="row g-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                className="col-lg-3 col-md-6 wow fadeInUp"
-                data-wow-delay={`${i * 0.2}s`}
-                key={i}
-              >
-                <div className="team-item">
-                  <div className="overflow-hidden">
-                    <img
-                      className="img-fluid"
-                      src={`assets/img/team-${i}.jpg`}
-                      alt={`Team member ${i}`}
-                    />
-                  </div>
-                  <div
-                    className="position-relative d-flex justify-content-center"
-                    style={{ marginTop: '-19px' }}
-                  >
-                    <a className="btn btn-square mx-1" href="">
-                      <i className="fab fa-facebook-f" />
-                    </a>
-                    <a className="btn btn-square mx-1" href="">
-                      <i className="fab fa-twitter" />
-                    </a>
-                    <a className="btn btn-square mx-1" href="">
-                      <i className="fab fa-instagram" />
-                    </a>
-                  </div>
-                  <div className="text-center p-4">
-                    <h5 className="mb-0">Nom Prénom</h5>
-                    <small>Rôle dans l'équipe</small>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* Team End */}
+    
     </div>
   );
 }

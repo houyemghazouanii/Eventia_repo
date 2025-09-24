@@ -51,15 +51,11 @@ export default function Footer() {
         <div className="container">
           <div className="copyright">
             <div className="row">
-              <div className="col-md-12 text-center">
-                ©{" "}
-                <a className="border-bottom" href="#">
-                  EventIA
-                </a>{" "}
-                - Tous droits réservés.  
-                Développé avec ❤️ par Houyem Ghazouani
-              </div>
+            <div className="col-md-12 text-center">
+              © <span className="border-bottom">EventIA</span> - Tous droits réservés.  
+              Développé avec par Houyem Ghazouani
             </div>
+          </div>
           </div>
         </div>
       </div>

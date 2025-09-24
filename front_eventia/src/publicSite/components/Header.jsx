@@ -1,9 +1,7 @@
-// Dans Header.js
-
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaHistory, FaBell } from "react-icons/fa";
+import { FaHistory, FaBell, FaSignOutAlt, FaUserCircle, FaShoppingCart } from "react-icons/fa";
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -11,10 +9,11 @@ function Header() {
   const [notifications, setNotifications] = useState([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const navigate = useNavigate();
 
-  // Déplacez fetchNotifications en dehors de l'useEffect pour qu'il soit réutilisable
-  const fetchNotifications = async () => {
+  // fetchNotifications stable grâce à useCallback
+  const fetchNotifications = useCallback(async () => {
     if (!user?.userId || !user?.token) return;
 
     try {
@@ -24,12 +23,12 @@ function Header() {
       );
 
       const notifs = Array.isArray(res.data) ? res.data : [];
-      setNotifications(notifs.map(n => ({ ...n, lu: n.lu ?? false })));
+      setNotifications(notifs.map((n) => ({ ...n, lu: n.lu ?? false })));
     } catch (error) {
       console.error("Erreur récupération notifications:", error);
       setNotifications([]);
     }
-  };
+  }, [user?.userId, user?.token]);
 
   // Charger user au montage
   useEffect(() => {
@@ -69,54 +68,33 @@ function Header() {
       }
     };
     syncPanierBackend();
-    const handleStorageChange = () => {
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
-      const prenom = localStorage.getItem("prenom");
-      const nom = localStorage.getItem("nom");
-      const userId = localStorage.getItem("userId");
-
-      if (token && role && userId) {
-        setUser({ token, role, prenom, nom, userId });
-      } else {
-        setUser(null);
-        setPanierCount(0);
-      }
-
-      const panier = JSON.parse(localStorage.getItem("panier")) || [];
-      setPanierCount(panier.length);
-    };
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("panierUpdated", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("panierUpdated", handleStorageChange);
-    };
   }, [user]);
 
   // Charger notifications + auto refresh + écoute d'événement
   useEffect(() => {
     if (!user?.userId) return;
+
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
     window.addEventListener("notificationUpdated", fetchNotifications);
+
     return () => {
       clearInterval(interval);
       window.removeEventListener("notificationUpdated", fetchNotifications);
     };
-  }, [user?.userId, user?.token]);
+  }, [fetchNotifications]);
 
   // Badge rouge
   useEffect(() => {
-    setHasUnread(notifications.some(n => !n.lu));
+    setHasUnread(notifications.some((n) => !n.lu));
   }, [notifications]);
 
-  // Fermer dropdown si clic dehors
+  // Fermer dropdowns si clic dehors
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest(".notif-dropdown")) {
+      if (!event.target.closest(".notif-dropdown") && !event.target.closest(".profile-dropdown")) {
         setShowNotifDropdown(false);
+        setShowProfileDropdown(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -128,8 +106,12 @@ function Header() {
     if (!showNotifDropdown) setHasUnread(false);
   };
 
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown(!showProfileDropdown);
+  };
+
   const handleMarkAllAsRead = async () => {
-    setNotifications(prev => prev.map(n => ({ ...n, lu: true })));
+    setNotifications((prev) => prev.map((n) => ({ ...n, lu: true })));
     if (user?.token) {
       try {
         await axios.put(
@@ -151,6 +133,9 @@ function Header() {
     navigate("/");
   };
 
+  // Initiale du profil
+  const profileInitial = user?.prenom?.[0]?.toUpperCase() || user?.nom?.[0]?.toUpperCase() || "U";
+
   return (
     <div className="container-fluid position-relative p-0">
       <nav className="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
@@ -171,13 +156,32 @@ function Header() {
             <Link to="/publicevents" className="nav-item nav-link">Événements</Link>
             <Link to="/contact" className="nav-item nav-link">Contact</Link>
           </div>
-          <div className="d-flex gap-2 align-items-center">
-            {user?.role === "USER" && panierCount > 0 && (
-              <Link to="/panier" className="btn btn-warning rounded-pill px-3">
-                <i className="fa fa-shopping-cart me-2" />
-                Panier ({panierCount})
+          <div className="d-flex gap-3 align-items-center">
+
+            {/* Panier icône avec badge */}
+            {user?.role === "USER" && (
+              <Link to="/panier" style={{ position: "relative", color: "#333" }}>
+                <FaShoppingCart size={22} style={{ cursor: "pointer", color:"#0ABAB5" }} />
+                {panierCount > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: -8,
+                      right: -10,
+                      background: "red",
+                      color: "white",
+                      borderRadius: "50%",
+                      padding: "2px 6px",
+                      fontSize: 12,
+                    }}
+                  >
+                    {panierCount}
+                  </span>
+                )}
               </Link>
             )}
+
+            {/* Notifications */}
             {user && (
               <div style={{ position: "relative" }} className="notif-dropdown">
                 <FaBell size={24} style={{ cursor: "pointer", marginRight: "10px" }} onClick={toggleNotifDropdown} />
@@ -186,7 +190,7 @@ function Header() {
                     position: "absolute", top: -5, right: 0, background: "red",
                     color: "white", borderRadius: "50%", padding: "2px 6px", fontSize: 12
                   }}>
-                    {notifications.filter(n => !n.lu).length}
+                    {notifications.filter((n) => !n.lu).length}
                   </span>
                 )}
                 {showNotifDropdown && (
@@ -210,7 +214,7 @@ function Header() {
                     {notifications.length === 0 ? (
                       <p style={{ padding: 15 }}>Aucune notification</p>
                     ) : (
-                      notifications.map(notif => (
+                      notifications.map((notif) => (
                         <Link to={`/notification/${notif.id}`} key={notif.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                           <div style={{
                             padding: "10px 15px", borderBottom: "1px solid #eee",
@@ -237,25 +241,75 @@ function Header() {
                 )}
               </div>
             )}
-            {user ? (
-              <>
-                <Link
-                  to={user.role === "USER" ? "/profile-participant" :
-                       user.role === "ORGANIZER" ? "/organizer/dashboard" : "/admin/dashboard"}
-                  className="btn btn-primary rounded-pill px-4"
+
+            {/* Profil (avatar rond avec initiale) */}
+            {user && (
+              <div style={{ position: "relative" }} className="profile-dropdown">
+                <div
+                  onClick={toggleProfileDropdown}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
                 >
-                  {user.role === "USER" ? "Mon profil" : "Dashboard"}
-                </Link>
-                {user.role === "USER" && (
-                  <button onClick={() => navigate("/mon-historique")} className="btn btn-outline-info rounded-pill px-4">
-                    <FaHistory /> Mon Historique
-                  </button>
+                  {profileInitial}
+                </div>
+
+                {showProfileDropdown && (
+                  <div style={{
+                    position: "absolute", top: 50, right: 0, background: "white",
+                    boxShadow: "0px 0px 10px rgba(0,0,0,0.2)", borderRadius: 5, zIndex: 1000,
+                    minWidth: 180
+                  }}>
+                    <ul style={{ listStyle: "none", margin: 0, padding: "10px 0" }}>
+                      {user.role === "USER" && (
+                        <>
+                          <li>
+                            <Link to="/profile-participant" style={{ display: "flex", alignItems: "center", padding: "8px 15px", textDecoration: "none", color: "#0ABAB5" }}>
+                              <FaUserCircle style={{ marginRight: 8 }} /> Mon Profile
+                            </Link>
+                          </li>
+                          <li>
+                            <Link to="/mon-historique" style={{ display: "flex", alignItems: "center", padding: "8px 15px", textDecoration: "none", color: "#fd7e14" }}>
+                              <FaHistory style={{ marginRight: 8 }} /> Mon Historique
+                            </Link>
+                          </li>
+                        </>
+                      )}
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "8px 15px",
+                            width: "100%",
+                            background: "none",
+                            border: "none",
+                            textAlign: "left",
+                            cursor: "pointer",
+                            color: "#333"
+                          }}
+                        >
+                          <FaSignOutAlt style={{ marginRight: 8 }} /> Déconnexion
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
                 )}
-                <button onClick={handleLogout} className="btn btn-outline-secondary rounded-pill px-4">
-                  Déconnexion
-                </button>
-              </>
-            ) : (
+              </div>
+            )}
+
+            {!user && (
               <>
                 <Link to="/login-participant" className="btn btn-outline-primary rounded-pill px-4">
                   S'inscrire
