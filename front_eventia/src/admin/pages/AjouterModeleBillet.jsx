@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 const AjouterModeleBillet = () => {
   const [nom, setNom] = useState("");
   const [templateHtml, setTemplateHtml] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

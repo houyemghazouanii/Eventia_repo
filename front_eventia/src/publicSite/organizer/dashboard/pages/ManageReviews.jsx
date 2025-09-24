@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import OrganizerLayout from "./OrganizerLayout";
 import axios from "../../../../admin/config/axiosConfig";
 import Swal from "sweetalert2";
 import { FaTrashAlt, FaStar } from "react-icons/fa";
-import { Pie, Line, PolarArea } from "react-chartjs-2"; // Add PolarArea
+import { Pie, PolarArea } from "react-chartjs-2"; 
 import {
   Chart as ChartJS,
   ArcElement,
@@ -13,7 +13,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  RadialLinearScale, // Add RadialLinearScale
+  RadialLinearScale,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -26,7 +26,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   ChartDataLabels,
-  RadialLinearScale // Register the new scale
+  RadialLinearScale
 );
 
 export default function ManageReviews() {
@@ -48,36 +48,34 @@ export default function ManageReviews() {
     }
   }
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     if (!organizerId || !token) {
       setErrorMsg("Vous devez être connecté.");
       setLoading(false);
       return;
     }
 
+    setLoading(true);
     try {
-      // Récupérer les événements de l'organisateur
       const eventsRes = await axios.get(
         `/events/users/organizers/${organizerId}/events`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const events = eventsRes.data;
 
-      // Pour chaque événement, appeler le backend Flask pour récupérer les avis avec sentiment
       const reviewsPromises = events.map(async (event) => {
         try {
           const res = await axios.get(
             `http://localhost:8081/reviews/event/${event.id}`
           );
           const eventReviews = res.data.reviews || [];
-          // Ajouter le titre de l'événement à chaque avis
           return eventReviews.map((rev) => ({
             ...rev,
             eventTitle: event.titre,
           }));
         } catch (err) {
           console.error(
-            `Impossible de récupérer les avis sentiment de l'événement ${event.id}`,
+            `Impossible de récupérer les avis de l'événement ${event.id}`,
             err
           );
           return [];
@@ -92,11 +90,11 @@ export default function ManageReviews() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [organizerId, token]); // <-- inclure toutes les dépendances
 
   useEffect(() => {
     fetchReviews();
-  }, [organizerId, token]);
+  }, [fetchReviews]); // <-- ESLint ok
 
   const handleDelete = async (reviewId) => {
     const result = await Swal.fire({

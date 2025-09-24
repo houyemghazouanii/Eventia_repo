@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../../../../admin/config/axiosConfig";
 import OrganizerLayout from "./OrganizerLayout";
@@ -22,17 +22,11 @@ const EventDetailsOrganizer = () => {
     image: "",
   });
 
-  useEffect(() => {
-    loadEvent();
-  }, []);
-
-  const loadEvent = async () => {
+  const loadEvent = useCallback(async () => {
     try {
       const token = JSON.parse(localStorage.getItem("user"))?.token;
       const response = await axios.get(`http://localhost:8081/events/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = response.data;
@@ -43,7 +37,11 @@ const EventDetailsOrganizer = () => {
     } catch (error) {
       console.error("Erreur lors du chargement de l'événement :", error);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadEvent();
+  }, [loadEvent]);
 
   return (
     <OrganizerLayout>

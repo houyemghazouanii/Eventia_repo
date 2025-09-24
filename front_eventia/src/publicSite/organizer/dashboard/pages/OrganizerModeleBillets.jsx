@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "../../../../admin/config/axiosConfig";
 import Swal from "sweetalert2";
 import OrganizerLayout from "./OrganizerLayout";
@@ -11,8 +11,9 @@ const OrganizerModeleBillets = () => {
   const token = localStorage.getItem("token");
   const organizerId = localStorage.getItem("id");
 
-  const fetchData = async () => {
-    if (!token) return;
+  const fetchData = useCallback(async () => {
+    if (!token || !organizerId) return;
+
     setLoading(true);
     try {
       const [modelesRes, eventsRes] = await Promise.all([
@@ -26,9 +27,11 @@ const OrganizerModeleBillets = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, organizerId]); 
 
-  useEffect(() => { fetchData(); }, [token]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); 
 
   // ⚡ Associer un modèle à un événement
   const handleAssocier = async (modele) => {

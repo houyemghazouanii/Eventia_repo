@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FaEdit, FaEye, FaTrashAlt, FaPlus, FaBan } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -31,7 +31,14 @@ function EventOrganizer() {
     }
   }
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
+    if (!organizerId || !token) {
+      setErrorMsg("Vous devez être connecté pour voir vos événements.");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     try {
       const response = await axios.get(
         `/events/users/organizers/${organizerId}/events`,
@@ -46,16 +53,11 @@ function EventOrganizer() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [organizerId, token]);
 
   useEffect(() => {
-    if (!organizerId || !token) {
-      setErrorMsg("Vous devez être connecté pour voir vos événements.");
-      setLoading(false);
-      return;
-    }
     fetchEvents();
-  }, [organizerId, token]);
+  }, [fetchEvents]) 
 
   const filteredEvents = events.filter(
     (event) =>

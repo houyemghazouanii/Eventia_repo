@@ -13,13 +13,13 @@ function Header() {
   const navigate = useNavigate();
 
   // fetchNotifications stable grâce à useCallback
-  const fetchNotifications = useCallback(async () => {
-    if (!user?.userId || !user?.token) return;
+  const fetchNotifications = useCallback(async (userId, token) => {
+    if (!userId || !token) return;
 
     try {
       const res = await axios.get(
-        `http://127.0.0.1:5000/notifications/user/${user.userId}`,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        `http://127.0.0.1:5000/notifications/user/${userId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const notifs = Array.isArray(res.data) ? res.data : [];
@@ -28,7 +28,7 @@ function Header() {
       console.error("Erreur récupération notifications:", error);
       setNotifications([]);
     }
-  }, [user?.userId, user?.token]);
+  }, []);
 
   // Charger user au montage
   useEffect(() => {
@@ -72,17 +72,17 @@ function Header() {
 
   // Charger notifications + auto refresh + écoute d'événement
   useEffect(() => {
-    if (!user?.userId) return;
+    if (!user?.userId || !user?.token) return;
 
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
-    window.addEventListener("notificationUpdated", fetchNotifications);
+    fetchNotifications(user.userId, user.token);
+    const interval = setInterval(() => fetchNotifications(user.userId, user.token), 60000);
+    window.addEventListener("notificationUpdated", () => fetchNotifications(user.userId, user.token));
 
     return () => {
       clearInterval(interval);
-      window.removeEventListener("notificationUpdated", fetchNotifications);
+      window.removeEventListener("notificationUpdated", () => fetchNotifications(user.userId, user.token));
     };
-  }, [fetchNotifications]);
+  }, [user?.userId, user?.token, fetchNotifications]);
 
   // Badge rouge
   useEffect(() => {

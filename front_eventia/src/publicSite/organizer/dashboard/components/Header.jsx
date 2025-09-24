@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
-  const [showMenu, setShowMenu] = useState(false);
+  const [showMenu, setShowMenu] = useState(false); // Corrigé
   const menuRef = useRef();
 
+  // Fermer le menu si clic en dehors
   useEffect(() => {
     function handleClickOutside(e) {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -12,7 +13,7 @@ const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setShowMenu]); // setShowMenu ajouté aux dépendances
 
   const getInitial = () => {
     if (!organizerName) return "O";
@@ -26,7 +27,7 @@ const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "10px 20px",
-        backgroundColor: "#eaf4fc", // plus clair
+        backgroundColor: "#eaf4fc",
         color: "#134074",
         height: 60,
         width: "100%",
@@ -34,6 +35,7 @@ const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
         borderBottom: "1px solid #dce4ec",
       }}
     >
+      {/* Toggle Sidebar */}
       <button
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
@@ -94,11 +96,7 @@ const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
           gap: 10,
         }}
       >
-        <span
-          style={{ fontSize: "1.5rem", animation: "wave 2s infinite" }}
-          role="img"
-          aria-label="Salut"
-        >
+        <span style={{ fontSize: "1.5rem", animation: "wave 2s infinite" }} role="img" aria-label="Salut">
           👋
         </span>
         <span>
@@ -106,24 +104,50 @@ const Header = ({ toggleSidebar, organizerName, sidebarOpen }) => {
         </span>
       </div>
 
-      {/* Avatar */}
-      <div
-        title="Organisateur"
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: "50%",
-          backgroundColor: "#4d84e4ff",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontWeight: "700",
-          fontSize: "1.3rem",
-          userSelect: "none",
-        }}
-      >
-        {getInitial()}
+      {/* Avatar avec menu */}
+      <div style={{ position: "relative" }} ref={menuRef}>
+        <div
+          onClick={() => setShowMenu(!showMenu)}
+          title="Organisateur"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            backgroundColor: "#4d84e4ff",
+            color: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: "700",
+            fontSize: "1.3rem",
+            userSelect: "none",
+            cursor: "pointer",
+          }}
+        >
+          {getInitial()}
+        </div>
+
+        {/* Menu déroulant */}
+        {showMenu && (
+          <div
+            className="menu-dropdown"
+            style={{
+              position: "absolute",
+              top: 50,
+              right: 0,
+              backgroundColor: "#fff",
+              border: "1px solid #dce4ec",
+              borderRadius: 5,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              padding: "10px",
+              zIndex: 10,
+            }}
+          >
+            <div style={{ padding: "5px 10px", cursor: "pointer" }}>Profil</div>
+            <div style={{ padding: "5px 10px", cursor: "pointer" }}>Paramètres</div>
+            <div style={{ padding: "5px 10px", cursor: "pointer" }}>Déconnexion</div>
+          </div>
+        )}
       </div>
 
       <style>{`
