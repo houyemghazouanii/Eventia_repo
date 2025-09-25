@@ -22,7 +22,6 @@ public class PreferenceService {
         return new PreferenceDto(
                 preference.getId(),
                 preference.getCategorie(),
-                preference.getBudget(),
                 preference.getLocalisation(),
                 preference.getParticipant().getId(),
                 preference.getParticipant().getNom(),
@@ -40,7 +39,6 @@ public class PreferenceService {
                 .orElse(new Preference());
 
         preference.setCategorie(dto.getCategorie());
-        preference.setBudget(dto.getBudget());
         preference.setLocalisation(dto.getLocalisation());
         preference.setParticipant(participant);
 
@@ -49,7 +47,6 @@ public class PreferenceService {
         return new PreferenceDto(
                 saved.getId(),
                 saved.getCategorie(),
-                saved.getBudget(),
                 saved.getLocalisation(),
                 participant.getId(),
                 participant.getNom(),

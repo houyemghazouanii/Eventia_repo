@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class PreferenceDto {
     private Long id;
     private String categorie;
-    private String budget;
     private String localisation;
     private Long participantId;
     private String participantNom;

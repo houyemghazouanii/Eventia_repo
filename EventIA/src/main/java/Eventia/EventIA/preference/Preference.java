@@ -17,7 +17,6 @@ public class Preference {
     private Long id;
 
     private String categorie;   // Ex: Musique, Sport, Conférence
-    private String budget;      // Ex: Gratuit, Payant
     private String localisation; // Ex: Tunis, Sfax...
 
     // Relation avec User (participant uniquement)
