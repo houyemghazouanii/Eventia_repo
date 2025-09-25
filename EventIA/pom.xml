@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version> <!-- ✅ version stable -->
+		<version>3.2.5</version>
 		<relativePath/>
 	</parent>
 
@@ -21,6 +21,13 @@
 		<jjwt.version>0.11.5</jjwt.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- ✅ Configuration SonarQube -->
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.projectKey>EventIA</sonar.projectKey>
+		<sonar.projectName>EventIA</sonar.projectName>
+		<sonar.language>java</sonar.language>
+		<sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -47,7 +54,8 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!-- ✅ JavaMail (inclus dans spring-boot-starter-mail) -->
+
+		<!-- ✅ JavaMail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
@@ -97,6 +105,8 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- QR Code -->
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>core</artifactId>
@@ -107,23 +117,24 @@
 			<artifactId>javase</artifactId>
 			<version>3.5.0</version>
 		</dependency>
+
+		<!-- PDF -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>html2pdf</artifactId>
-			<version>4.0.3</version> <!-- Vérifie la dernière version sur Maven Central -->
+			<version>4.0.3</version>
 		</dependency>
+
+		<!-- Webflux -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
-
-
-
-
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!-- Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -141,9 +152,17 @@
 				</configuration>
 			</plugin>
 
+			<!-- Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- ✅ SonarQube Plugin -->
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.10.0.2594</version>
 			</plugin>
 		</plugins>
 	</build>
