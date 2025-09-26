@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
-import Event from '../Events/Events';
+import AjouterModeleBillet from './AjouterModeleBillet';
 
 test('Event component renders without crashing', () => {
-  render(<Event />);
+  render(<AjouterModeleBillet />);
 });

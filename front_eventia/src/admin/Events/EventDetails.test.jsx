@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import EventDetails from '../Events/EventDetails';
+import EventDetails from './EventDetails';
 
 test('Event component renders without crashing', () => {
   render(<EventDetails />);

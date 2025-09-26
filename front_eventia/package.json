@@ -44,6 +44,18 @@
     "test": "react-scripts test --env=jsdom --coverage --watchAll=false",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/index.js",
+      "!src/reportWebVitals.js",
+      "!src/setupTests.js"
+    ],
+    "coverageReporters": [
+      "lcov",
+      "text"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
