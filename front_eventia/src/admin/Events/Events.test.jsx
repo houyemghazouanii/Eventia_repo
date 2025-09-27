@@ -1,11 +1,11 @@
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import EventDetails from './EventDetails';
+import Events from './Events';
 
-test('EventDetails component renders without crashing', () => {
+test('Events component renders without crashing', () => {
   render(
     <BrowserRouter>
-      <EventDetails />
+      <Events />
     </BrowserRouter>
   );
 });

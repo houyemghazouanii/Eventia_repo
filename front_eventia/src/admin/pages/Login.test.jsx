@@ -1,6 +1,11 @@
 import { render } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import Login from './Login';
 
 test('Login component renders without crashing', () => {
-  render(<Login />);
+  render(
+    <BrowserRouter>
+      <Login />
+    </BrowserRouter>
+  );
 });

@@ -1,6 +1,11 @@
 import { render } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import AdminProfile from './AdminProfile';
 
-test('Event component renders without crashing', () => {
-  render(<AdminProfile />);
+test('AdminProfile component renders without crashing', () => {
+  render(
+    <BrowserRouter>
+      <AdminProfile />
+    </BrowserRouter>
+  );
 });
